@@ -1,0 +1,17 @@
+	                    Profile
+-------------------------------------------------
+Name: Johnny Appleseed
+
+Address: 1234 CompSci Ave
+
+Email: johnnyappleseed@gmail.com
+
+Objective: Pick some apples
+
+	                  Education
+-------------------------------------------------
+School: Mountain View High School
+Graduation Date: XXXX-XX
+
+	            Work Experience
+-------------------------------------------------
