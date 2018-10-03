@@ -15,3 +15,9 @@ Graduation Date: XXXX-XX
 
 	            Work Experience
 -------------------------------------------------
+Job Title: Job Title
+Company Name: Company Name
+Start Date: Start Date
+End Date: End Date
+Job Function: Job Function
+
