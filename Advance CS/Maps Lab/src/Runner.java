@@ -1,8 +1,14 @@
+import javax.swing.JFrame;
 
 public class Runner {
 
 	public static void main(String[] args) {
-		System.out.println();
+		JFrame frame = new JFrame("Screen");
+		Screen sc = new Screen(frame);
+		frame.add(sc);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
 	}
 
 }

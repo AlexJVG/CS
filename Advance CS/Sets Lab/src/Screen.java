@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class Screen extends JPanel implements ActionListener{
 
@@ -39,6 +41,7 @@ public class Screen extends JPanel implements ActionListener{
 	private JTextField pricepro;
 	private JTextField quanitypro;
 	private JButton addButton;
+	private boolean updateOrAdd;
 	public Screen(int numberofquan,ArrayList<Integer> lineslist,ArrayList<Integer> quantval){
 		System.out.println("TEST");
 		System.out.println(numberofquan);
@@ -49,6 +52,7 @@ public class Screen extends JPanel implements ActionListener{
 		hashSet = new HashSet<Item>();
 		treeSet = new TreeSet<Item>();
 		lines =0;
+		updateOrAdd = false;
 		try {
 			reader = new BufferedReader(new FileReader("StoreA.txt"));
 			while(reader.readLine()!=null) {
@@ -104,13 +108,37 @@ public class Screen extends JPanel implements ActionListener{
     		textArea.append(each.toString());
     	}
 		this.setFocusable(true);
-		
 	}
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
     	g.setColor(Color.white);
         g.fillRect(0, 0, 800, 800);
+        for(int i =0;i<quantityList.size();i++) {
+			quantityList.get(i).getDocument().addDocumentListener(new DocumentListener() {
+    			public void changedUpdate(DocumentEvent e) {
+    			  }
+    			  public void removeUpdate(DocumentEvent e) {
+    				  updateText();
+    			  }
+    			  public void insertUpdate(DocumentEvent e) {
+    				  updateText();
+    			  }
+    			  public void updateText() {
+    				  System.out.println("Trigger");
+    				  System.out.println(quantityList.size());
+    				  System.out.println(shoppingCart.size());
+    				  if(quantityList.size()>0&&shoppingCart.size()>0) {
+    					  for(int i = 0; i<quantityList.size();i++) {
+            				  if(!quantityList.get(i).getText().equals("")) {
+            					  System.out.println("TEstasd123");
+            					  shoppingCart.get(i).updateValue(Integer.parseInt(quantityList.get(i).getText()));
+            				  } 
+        				  }
+    				  }
+    				}
+    		});
+		}
 	}
 	@Override
 	public Dimension getPreferredSize() {
@@ -118,39 +146,57 @@ public class Screen extends JPanel implements ActionListener{
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		System.out.println(e);
 		if(!namepro.getText().equals("")&&!pricepro.getText().equals("")&&!quanitypro.getText().equals("")) {
 			if(e.getSource()==addButton) {
 				Item temp = new Item(namepro.getText(),Double.parseDouble(pricepro.getText()));
 				for(Item each : hashSet) {
 					if(each.hashCode()==temp.hashCode()) {
-						shoppingCart.add(new Pair<Item,Integer>(temp,Integer.parseInt(quanitypro.getText())));
+						for(Pair<Item,Integer> item: shoppingCart) {
+							if(item.getKey().hashCode()==temp.hashCode()) {
+								item.updateValue(item.getValue()+Integer.parseInt(quanitypro.getText()));
+								updateOrAdd = true;
+							}
+						}
+						if(updateOrAdd==false) {
+							shoppingCart.add(new Pair<Item,Integer>(temp,Integer.parseInt(quanitypro.getText())));
+						}
+						else {
+							updateOrAdd=false;
+						}
 						namepro.setText("");
 						pricepro.setText("");
 						quanitypro.setText("");
 					}
 				}
 			}
-			totalitem=0;
-			totalprice=0;
-			shoppingArea.setText("");
-			for(Pair<Item,Integer> each : shoppingCart) {
-				totalitem+=each.getValue();
-				totalprice+=each.getKey().getPrice()*each.getValue();
-			}
-			shoppingArea.append("Shopping Cart\n# of Items: "+totalitem+"\nTotal Cost: "+totalprice+"\n\n");
-			for(Pair<Item,Integer> each : shoppingCart) {
-				shoppingArea.append("Item Name: "+ each.getKey().getName()+" - Item Price: "+each.getKey().getPrice()+" - Quantity: "+each.getValue()+"\n");
-			}
-			lineamount= new ArrayList<Integer>();
-			for(String each : shoppingArea.getText().split("\\n")) {
-				lineamount.add(each.length());
-			}
-			quantvals = new ArrayList<Integer>();
-			for(Pair<Item,Integer> each : shoppingCart) {
-				quantvals.add(each.getValue());
-			}
-			Runner.remake(shoppingArea.getLineCount()-5,lineamount,quantvals);
 		}
+		System.out.println("Testlength:"+shoppingCart.size());
+		for(int i = 0; i < shoppingCart.size(); i++) {
+			if(shoppingCart.get(i).getValue()==0) {
+				shoppingCart.remove(i);
+			}
+		}
+		shoppingArea.setText("");
+		shoppingArea.append("Shopping Cart\n# of Items: "+totalitem+"\nTotal Cost: "+totalprice+"\n\n");
+		for(Pair<Item,Integer> each : shoppingCart) {
+			shoppingArea.append("Item Name: "+ each.getKey().getName()+" - Item Price: "+each.getKey().getPrice()+" - Quantity: "+each.getValue()+"\n");
+		}
+		totalitem=0;
+		totalprice=0;
+		for(Pair<Item,Integer> each : shoppingCart) {
+			totalitem+=each.getValue();
+			totalprice+=each.getKey().getPrice()*each.getValue();
+		}
+		lineamount= new ArrayList<Integer>();
+		for(String each : shoppingArea.getText().split("\\n")) {
+			lineamount.add(each.length());
+		}
+		quantvals = new ArrayList<Integer>();
+		for(Pair<Item,Integer> each : shoppingCart) {
+			quantvals.add(each.getValue());
+		}
+		repaint();
+		Runner.remake(shoppingArea.getLineCount()-5,lineamount,quantvals);
 	}
-
 }

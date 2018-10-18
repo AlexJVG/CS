@@ -7,7 +7,9 @@ public class Pair<K, V> {
         this.key = key;
         this.value = value;
     }
-
+    public void updateValue(V value) {
+    	this.value = value;
+    }
     public K getKey() {
         return key;
     }

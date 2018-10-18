@@ -26,11 +26,9 @@ public class Item implements Comparable<Item>,Serializable{
 	}
 	@Override
 	public int hashCode() {
-		int hashCode =0, multiplier =1;
+		int hashCode =0;
 		for(int i =0;i<name.length()-1;i++) {
-			hashCode = 	hashCode + (int) (name.charAt(i)) * multiplier;
-			int shifted = multiplier << 5;
-			multiplier = shifted - multiplier;
+			hashCode = 	hashCode + (int) (name.charAt(i)) * 17;
 		}
 		hashCode = (int) (hashCode*price);
 		return hashCode;
