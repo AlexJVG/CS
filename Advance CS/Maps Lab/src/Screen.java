@@ -27,6 +27,8 @@ public class Screen extends JPanel implements ActionListener{
 	private ArrayList<Pair<Item,Integer>> shoppingCart;
 	private int totalitem;
 	private double totalprice;
+	private double totalshipping;
+	private double totalweight;
 	private boolean updateOrAdd;
 	private Item tempItem;
 	
@@ -49,6 +51,8 @@ public class Screen extends JPanel implements ActionListener{
 	private JButton removeItem;
 	private JTextField changeItemName;
 	private JTextField changeItemPrice;
+	private JTextField addItemCompany;
+	private JTextField addItemWeight;
 	private boolean returnToMain;
 	
 	private BufferedReader reader;
@@ -63,6 +67,8 @@ public class Screen extends JPanel implements ActionListener{
 		lines = 0;
 		totalprice=0;
 		totalitem=0;
+		totalweight=0;
+		totalshipping=0;
 		updateOrAdd = false;
 		returnToMain = true;
 		try {
@@ -73,8 +79,8 @@ public class Screen extends JPanel implements ActionListener{
 			reader = new BufferedReader(new FileReader("storeB.txt"));
 			for(int i = 0;i<lines;i++){
 				temptxt = reader.readLine();
-				hashStore.put((new Item(temptxt.substring(0, temptxt.indexOf(",")),temptxt.substring(temptxt.indexOf(",")+1, temptxt.indexOf(",",temptxt.lastIndexOf(","))))),Double.parseDouble(temptxt.substring(temptxt.lastIndexOf(",")+1)));
-				treeStore.put((new Item(temptxt.substring(0, temptxt.indexOf(",")),temptxt.substring(temptxt.indexOf(",")+1, temptxt.indexOf(",",temptxt.lastIndexOf(","))))),Double.parseDouble(temptxt.substring(temptxt.lastIndexOf(",")+1)));
+				hashStore.put((new Item(temptxt.substring(0, temptxt.indexOf(",")),temptxt.substring(temptxt.indexOf(",")+1, temptxt.indexOf(",",temptxt.lastIndexOf(","))),round((Math.random()*100),2))),Double.parseDouble(temptxt.substring(temptxt.lastIndexOf(",")+1)));
+				treeStore.put((new Item(temptxt.substring(0, temptxt.indexOf(",")),temptxt.substring(temptxt.indexOf(",")+1, temptxt.indexOf(",",temptxt.lastIndexOf(","))),round((Math.random()*100),2))),Double.parseDouble(temptxt.substring(temptxt.lastIndexOf(",")+1)));
 			}
 		}
 		catch(Exception e) {
@@ -130,6 +136,14 @@ public class Screen extends JPanel implements ActionListener{
 		changeItemPrice.setBounds(0,30,100,30);
 		changeItemPrice.setVisible(false);
 		adminPanelReal.add(changeItemPrice);
+		addItemCompany = new JTextField();
+		addItemCompany.setBounds(0,30,100,30);
+		addItemCompany.setVisible(false);
+		adminPanelReal.add(addItemCompany);
+		addItemWeight = new JTextField();
+		addItemWeight.setBounds(100,0,100,30);
+		addItemWeight.setVisible(false);
+		adminPanelReal.add(addItemWeight);
 		adminPanel = new JDialog(testFrame,"Admin View Tab");
 		adminPanel.add(adminPanelReal);
 		adminPanel.setSize(300,120);
@@ -143,6 +157,7 @@ public class Screen extends JPanel implements ActionListener{
 		this.add(itemPane);
 		itemArea.append("Store Items:\n\n");
     	for(Item each : treeStore.keySet()) {
+    		System.out.println(each.getItemName());
     		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
     	}
 		this.setFocusable(true);
@@ -159,64 +174,150 @@ public class Screen extends JPanel implements ActionListener{
 		}
 		BigDecimal bd = new BigDecimal(value);
 		bd = bd.setScale(places, RoundingMode.HALF_UP);
-		System.out.println(bd.doubleValue());
 		return bd.doubleValue();
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==adminButton) {
 			adminPanel.setVisible(true);
+			passwordField.setVisible(true);
+			passwordButton.setText("Enter Password");
+			passwordButton.setBounds(0,30,100,30);
+			addItem.setVisible(false);
+			removeItem.setVisible(false);
+			changeItemName.setVisible(false);
+			changeItemPrice.setVisible(false);
+			returnToMain = false;
 		}
 		else if(e.getSource()==passwordButton||e.getSource()==addItem||e.getSource()==removeItem) {
-			if(passwordField.getText().equals("CompSci Rules")&&passwordButton.getText().equals("Enter Password")||returnToMain == true) {
-				if(passwordButton.getText().equals("Change Item")&&returnToMain == true) {
+			if(e.getSource()==passwordButton&&passwordField.getText().equals("CompSci Rules")&&passwordButton.getText().equals("Enter Password")||returnToMain == true) {
+				if(e.getSource()==passwordButton&&passwordButton.getText().equals("Change Item")&&returnToMain == true) {
 					for(Item each : hashStore.keySet()) {
-						if(each.equals(new Item(changeItemName.getText(),""))) {
+						if(each.equals(new Item(changeItemName.getText(),"",0))) {
 							tempItem = each;
 							break;
 						}
 					}
 					hashStore.remove(tempItem);
-					hashStore.put(new Item(changeItemName.getText(),tempItem.getCompanyName()), Double.parseDouble(changeItemPrice.getText()));
+					hashStore.put(new Item(changeItemName.getText(),tempItem.getCompanyName(),tempItem.getWeight()), round(Double.parseDouble(changeItemPrice.getText()),3));
 					for(Item each : treeStore.keySet()) {
-						if(each.equals(new Item(changeItemName.getText(),""))) {
+						if(each.equals(new Item(changeItemName.getText(),"",0))) {
 							tempItem = each;
 							break;
 						}
 					}
 					treeStore.remove(tempItem);
-					treeStore.put(new Item(changeItemName.getText(),tempItem.getCompanyName()), round(Double.parseDouble(changeItemPrice.getText()),3));
+					treeStore.put(new Item(changeItemName.getText(),tempItem.getCompanyName(),tempItem.getWeight()), round(Double.parseDouble(changeItemPrice.getText()),3));
 					itemArea.setText("");
 					itemArea.append("Store Items:\n\n");
 			    	for(Item each : treeStore.keySet()) {
 			    		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
 			    	}
+			    	changeItemName.setText("");
+			    	changeItemPrice.setText("");
+			    	addItemCompany.setText("");
+				}
+				else if(e.getSource()==addItem && returnToMain == true) {
+					for(Item each : hashStore.keySet()) {
+						if(each.equals(new Item(changeItemName.getText(),"",0))) {
+							tempItem = each;
+							break;
+						}
+					}
+					hashStore.remove(tempItem);
+					hashStore.put(new Item(changeItemName.getText(),addItemCompany.getText(),round(Double.parseDouble(addItemWeight.getText()),2)), round(Double.parseDouble(changeItemPrice.getText()),3));
+					for(Item each : treeStore.keySet()) {
+						if(each.equals(new Item(changeItemName.getText(),"",0))) {
+							tempItem = each;
+							break;
+						}
+					}
+					treeStore.remove(tempItem);
+					treeStore.put(new Item(changeItemName.getText(),addItemCompany.getText(),round(Double.parseDouble(addItemWeight.getText()),2)), round(Double.parseDouble(changeItemPrice.getText()),3));
+					itemArea.setText("");
+					itemArea.append("Store Items:\n\n");
+			    	for(Item each : treeStore.keySet()) {
+			    		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
+			    	}
+			    	changeItemName.setText("");
+			    	changeItemPrice.setText("");
+			    	addItemCompany.setText("");
+				}
+				else if(e.getSource()==removeItem && returnToMain == true) {
+					for(Item each : hashStore.keySet()) {
+						if(each.equals(new Item(changeItemName.getText(),"",0))) {
+							tempItem = each;
+							break;
+						}
+					}
+					hashStore.remove(tempItem);
+					for(Item each : treeStore.keySet()) {
+						if(each.equals(new Item(changeItemName.getText(),"",0))) {
+							treeStore.remove(each);
+							break;
+						}
+					}
+					itemArea.setText("");
+					itemArea.append("Store Items:\n\n");
+			    	for(Item each : treeStore.keySet()) {
+			    		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
+			    	}
+			    	changeItemName.setText("");
+			    	changeItemPrice.setText("");
+			    	addItemCompany.setText("");
 				}
 				passwordField.setVisible(false);
+				passwordField.setText("");
 				passwordButton.setText("Change Item");
 				passwordButton.setBounds(0, 0, 100, 30);
+				addItem.setBounds(0, 30, 100, 30);
+				removeItem.setBounds(0, 60, 100, 30);
 				addItem.setVisible(true);
 				removeItem.setVisible(true);
+				passwordButton.setVisible(true);
 				changeItemName.setVisible(false);
 				changeItemPrice.setVisible(false);
+				addItemCompany.setVisible(false);
+				addItemWeight.setVisible(false);
 				returnToMain = false;
 			}
-			else if(passwordButton.getText().equals("Change Item")&&returnToMain == false) {
+			else if(e.getSource()==passwordButton&&passwordButton.getText().equals("Change Item")&&returnToMain == false) {
 				returnToMain = true;
 				passwordButton.setBounds(0, 60, 100, 30);
 				changeItemName.setVisible(true);
 				changeItemPrice.setVisible(true);
+				changeItemPrice.setBounds(0,30,100,30);
 				addItem.setVisible(false);
 				removeItem.setVisible(false);
+			}
+			else if(e.getSource()==addItem && returnToMain == false) {
+				returnToMain = true;
+				changeItemName.setVisible(true);
+				changeItemPrice.setVisible(true);
+				changeItemPrice.setBounds(0,60,100,30);
+				addItemCompany.setVisible(true);
+				addItemWeight.setVisible(true);
+				addItem.setVisible(true);
+				addItem.setBounds(100,30,100,30);
+				passwordButton.setVisible(false);
+				removeItem.setVisible(false);
+			}
+			else if(e.getSource()==removeItem && returnToMain == false) {
+				returnToMain = true;
+				changeItemName.setVisible(true);
+				addItem.setVisible(false);
+				removeItem.setBounds(0,30,100,30);
+				passwordButton.setVisible(false);
+				removeItem.setVisible(true);
 			}
 		}
 		else if(e.getSource()==addButton) {
 			if(!nameField.getText().equals("")&&!quantityField.getText().equals("")) {
-				if(hashStore.containsKey(new Item(nameField.getText(),""))) {
+				if(hashStore.containsKey(new Item(nameField.getText(),"",0))) {
 					for(Item each : hashStore.keySet()) {
-						if(each.equals(new Item(nameField.getText(),""))) {
+						if(each.equals(new Item(nameField.getText(),"",0))) {
 							for(Pair<Item,Integer> each2 : shoppingCart) {
-								if(each2.getKey().equals(new Item(nameField.getText(),""))) {
+								if(each2.getKey().equals(new Item(nameField.getText(),"",0))) {
 									each2.updateValue(each2.getValue()+Integer.parseInt(quantityField.getText()));
 									updateOrAdd = true;
 								}
@@ -230,16 +331,22 @@ public class Screen extends JPanel implements ActionListener{
 						}
 					}
 				}
+				nameField.setText("");
+				quantityField.setText("");
 			}
 		}
 		totalitem=0;
 		totalprice=0;
+		totalweight=0;
+		totalshipping=0;
 		for(Pair<Item,Integer> each : shoppingCart) {
 			totalitem+=each.getValue();
 			totalprice+=hashStore.get(each.getKey())*each.getValue();
+			totalweight+=each.getKey().getWeight();
+			totalshipping+=each.getKey().getWeight()*2.40;
 		}
 		shoppingArea.setText("");
-		shoppingArea.append("Shopping Cart\n# of Items: "+totalitem+"\nTotal Cost: "+round(totalprice,3)+"\n\n");
+		shoppingArea.append("Shopping Cart\n# of Items: "+totalitem+"\nTotal Cost: "+round(totalprice,3)+"\nTotal Weigth: "+totalweight*totalitem+"\nShipping Cost: "+round(totalshipping*totalitem,2)+"\n\n");
 		for(Pair<Item,Integer> each : shoppingCart) {
 			shoppingArea.append("Item Name: "+ each.getKey().getItemName()+" - Item Price: "+hashStore.get(each.getKey())+" - Quantity: "+each.getValue()+"\n");
 		}

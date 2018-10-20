@@ -2,10 +2,12 @@
 public class Item implements Comparable<Item> {
 	private String itemName;
 	private String companyName;
+	private double weight;
 
-	public Item(String itemName, String companyName) {
+	public Item(String itemName, String companyName,double weight) {
 		this.itemName = itemName;
 		this.companyName = companyName;
+		this.weight = weight;
 	}
 
 	public String getItemName() {
@@ -15,8 +17,11 @@ public class Item implements Comparable<Item> {
 	public String getCompanyName() {
 		return companyName;
 	}
+	public double getWeight() {
+		return weight;
+	}
 	public String toString() {
-		return "Item: "+itemName+" - Company: "+companyName+" - Price: ";
+		return "Item: "+itemName+" - Company: "+companyName+" - Weight: "+weight+" - Price: ";
 	}
 	@Override
 	public boolean equals(Object o) {

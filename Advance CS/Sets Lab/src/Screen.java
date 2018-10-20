@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -40,6 +41,9 @@ public class Screen extends JPanel implements ActionListener{
 	private JTextField namepro;
 	private JTextField pricepro;
 	private JTextField quanitypro;
+	private JLabel nameLabel;
+	private JLabel quanityLabel;
+	private JLabel priceLabel;
 	private JButton addButton;
 	private boolean updateOrAdd;
 	public Screen(int numberofquan,ArrayList<Integer> lineslist,ArrayList<Integer> quantval){
@@ -75,6 +79,15 @@ public class Screen extends JPanel implements ActionListener{
 		namepro= new JTextField();
 		namepro.setBounds(0, 0, 100, 30);
 		this.add(namepro);
+		nameLabel = new JLabel("Name");
+		nameLabel.setBounds(100, 0, 100, 30);
+		this.add(nameLabel);
+		nameLabel = new JLabel("Price");
+		nameLabel.setBounds(100, 30, 100, 30);
+		this.add(nameLabel);
+		nameLabel = new JLabel("Quantity");
+		nameLabel.setBounds(100, 60, 100, 30);
+		this.add(nameLabel);
 		pricepro= new JTextField();
 		pricepro.setBounds(0, 30, 100, 30);
 		this.add(pricepro);
@@ -98,11 +111,11 @@ public class Screen extends JPanel implements ActionListener{
 		shoppingPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		shoppingPane.setBounds(200,0,400,800);
     	this.add(shoppingPane);
-    	for(int i =0;i<numberofquan;i++) {
-    		quantityList.add(i,new JTextField(Integer.toString(quantval.get(i))));
-    		quantityList.get(i).setBounds(25+(12*lineslist.get(i)),(i+5)*12,20, 20);
-    		this.add(quantityList.get(i));
-    	}
+//    	for(int i =0;i<numberofquan;i++) {
+//    		quantityList.add(i,new JTextField(Integer.toString(quantval.get(i))));
+//    		quantityList.get(i).setBounds(25+(12*lineslist.get(i)),(i+5)*12,20, 20);
+//    		this.add(quantityList.get(i));
+//    	}
     	textArea.append("Store Items:\n\n");
     	for(Item each : treeSet) {
     		textArea.append(each.toString());
