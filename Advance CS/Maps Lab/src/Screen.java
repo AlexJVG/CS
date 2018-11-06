@@ -2,6 +2,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.math.BigDecimal;
@@ -96,9 +99,11 @@ public class Screen extends JPanel implements ActionListener{
 		shoppingPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		this.add(shoppingPane);
 		nameField = new JTextField();
+		nameField.setText("Name");
 		nameField.setBounds(0, 0, 100, 30);
 		this.add(nameField);
 		quantityField = new JTextField();
+		quantityField.setText("Quantity");
 		quantityField.setBounds(0, 30, 100, 30);
 		this.add(quantityField);
 		addButton = new JButton("Add");
@@ -112,6 +117,7 @@ public class Screen extends JPanel implements ActionListener{
 		adminPanelReal = new JPanel();
 		adminPanelReal.setLayout(null);
 		passwordField = new JTextField();
+		passwordField.setText("Password");
 		passwordField.setBounds(0,0,100,30);
 		adminPanelReal.add(passwordField);
 		passwordButton = new JButton("Enter Password");
@@ -129,24 +135,50 @@ public class Screen extends JPanel implements ActionListener{
 		removeItem.setVisible(false);
 		adminPanelReal.add(removeItem);
 		changeItemName = new JTextField();
+		changeItemName.setText("Name");
 		changeItemName.setBounds(0,0,100,30);
 		changeItemName.setVisible(false);
 		adminPanelReal.add(changeItemName);
 		changeItemPrice = new JTextField();
+		changeItemPrice.setText("Price");
 		changeItemPrice.setBounds(0,30,100,30);
 		changeItemPrice.setVisible(false);
 		adminPanelReal.add(changeItemPrice);
 		addItemCompany = new JTextField();
+		addItemCompany.setText("Company");
 		addItemCompany.setBounds(0,30,100,30);
 		addItemCompany.setVisible(false);
 		adminPanelReal.add(addItemCompany);
 		addItemWeight = new JTextField();
+		addItemWeight.setText("Weight");
 		addItemWeight.setBounds(100,0,100,30);
 		addItemWeight.setVisible(false);
 		adminPanelReal.add(addItemWeight);
 		adminPanel = new JDialog(testFrame,"Admin View Tab");
 		adminPanel.add(adminPanelReal);
 		adminPanel.setSize(300,120);
+		adminPanel.addWindowListener(new WindowAdapter() 
+		{
+			  public void windowClosed(WindowEvent e)
+			  {
+			  }
+			  public void windowClosing(WindowEvent e)
+			  {
+			    passwordField.setVisible(true);
+			    passwordField.setText("Password");
+			    passwordButton.setVisible(true);
+			    addItem.setVisible(false);
+			    removeItem.setVisible(false);
+			    changeItemName.setVisible(false);
+			    changeItemName.setText("Name");
+			    changeItemPrice.setVisible(false);
+			    changeItemPrice.setText("Price");
+			    addItemCompany.setVisible(false);
+			    addItemCompany.setText("Company");
+			    addItemWeight.setVisible(false);
+			    addItemWeight.setText("Weight");
+			  }
+			});
 		itemArea = new JTextArea();
 		itemArea.setEditable(false);
 		itemArea.setLineWrap(true);
@@ -157,7 +189,6 @@ public class Screen extends JPanel implements ActionListener{
 		this.add(itemPane);
 		itemArea.append("Store Items:\n\n");
     	for(Item each : treeStore.keySet()) {
-    		System.out.println(each.getItemName());
     		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
     	}
 		this.setFocusable(true);
@@ -213,9 +244,10 @@ public class Screen extends JPanel implements ActionListener{
 			    	for(Item each : treeStore.keySet()) {
 			    		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
 			    	}
-			    	changeItemName.setText("");
-			    	changeItemPrice.setText("");
-			    	addItemCompany.setText("");
+			    	changeItemName.setText("Name");
+			    	changeItemPrice.setText("Price");
+			    	addItemCompany.setText("Company");
+			    	addItemWeight.setText("Weight");
 				}
 				else if(e.getSource()==addItem && returnToMain == true) {
 					for(Item each : hashStore.keySet()) {
@@ -239,9 +271,10 @@ public class Screen extends JPanel implements ActionListener{
 			    	for(Item each : treeStore.keySet()) {
 			    		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
 			    	}
-			    	changeItemName.setText("");
-			    	changeItemPrice.setText("");
-			    	addItemCompany.setText("");
+			    	changeItemName.setText("Name");
+			    	changeItemPrice.setText("Price");
+			    	addItemCompany.setText("Company");
+			    	addItemWeight.setText("Weight");
 				}
 				else if(e.getSource()==removeItem && returnToMain == true) {
 					for(Item each : hashStore.keySet()) {
@@ -262,9 +295,10 @@ public class Screen extends JPanel implements ActionListener{
 			    	for(Item each : treeStore.keySet()) {
 			    		itemArea.append(each.toString()+treeStore.get(each)+"\n\n");
 			    	}
-			    	changeItemName.setText("");
-			    	changeItemPrice.setText("");
-			    	addItemCompany.setText("");
+			    	changeItemName.setText("Name");
+			    	changeItemPrice.setText("Price");
+			    	addItemCompany.setText("Company");
+			    	addItemWeight.setText("Weight");
 				}
 				passwordField.setVisible(false);
 				passwordField.setText("");
