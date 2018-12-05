@@ -1,35 +1,49 @@
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import java.awt.*;
+import java.io.File;
 import java.io.Serializable;
 
 public class Gameboard implements Serializable {
     private int[][] board;
     private X drawerX;
     private O drawerO;
+    public boolean ai;
     public boolean gameState;
     public boolean turn;
     public int serverWins;
     public int clientWins;
+    public boolean reset;
 
     public Gameboard(){
         board = new int[3][3];
         drawerX = new X();
         drawerO = new O();
         gameState = false;
+        ai = false;
+        reset = false;
         turn = true;
         serverWins = 0;
         clientWins =0;
     }
-    public void updateBoard(int piece, int mouseX,int mouseY){
-        for(int i =0; i< board.length;i++){
-            for(int j =0;j<board[i].length;j++){
-                if(mouseX>100*j&&mouseX<100*(j+1)&&mouseY>100*i&&mouseY<100*(i+1)){
-                    if(board[i][j]==0){
-                        board[i][j] = piece;
-                        turn = true;
+    public void updateBoard(int piece, int mouseX,int mouseY,boolean ai){
+        if(!ai){
+            for(int i =0; i< board.length;i++){
+                for(int j =0;j<board[i].length;j++){
+                    if(mouseX>100*j&&mouseX<100*(j+1)&&mouseY>100*i&&mouseY<100*(i+1)){
+                        if(board[i][j]==0){
+                            board[i][j] = piece;
+                            turn = true;
+                        }
                     }
                 }
             }
+        }else{
+            board[mouseX][mouseY] = piece;
+            turn = true;
         }
+        playSound(1);
     }
     public void drawBoard(Graphics g){
         for(int x=0; x<4;x++){
@@ -64,7 +78,7 @@ public class Gameboard implements Serializable {
         }
         return boardCheck==9;
     }
-    public boolean rowFull(int row){
+    private boolean rowFull(int row){
         int rowCheck =0;
         for(int i =0;i<board[row].length;i++){
             if(board[row][i]!=0){
@@ -73,7 +87,7 @@ public class Gameboard implements Serializable {
         }
         return rowCheck==3;
     }
-    public boolean columnCheck(int column){
+    private boolean columnCheck(int column){
         int columnCheck =0;
         for(int j =0; j < board.length;j++){
             if(board[j][column]!=0){
@@ -82,7 +96,7 @@ public class Gameboard implements Serializable {
         }
         return columnCheck==3;
     }
-    public boolean diaCheck(int dir){
+    private boolean diaCheck(int dir){
         int diaCheck =0;
         if(dir ==0){
             //top left
@@ -111,22 +125,22 @@ public class Gameboard implements Serializable {
             for (int each : board[i]) {
                 checkTotalAmount += each;
             }
-            if (checkTotalAmount == 6&&columnCheck(i)) {
+            if (checkTotalAmount == 6&&rowFull(i)) {
                 return 1;
-            } else if (checkTotalAmount == 3&&columnCheck(i)) {
+            } else if (checkTotalAmount == 3&&rowFull(i)) {
                 return 2;
             } else if (i == 2&&boardFull()) {
                 return 0;
             }
             checkTotalAmount = 0;
         }
-        for(int i = 0; i<board[0].length;i++){
+        for(int i = 0; i<3;i++){
             for(int j = 0; j<board.length;j++){
                 checkTotalAmount += board[j][i];
             }
-            if (checkTotalAmount == 6&&rowFull(i)) {
+            if (checkTotalAmount == 6&&columnCheck(i)) {
                 return 1;
-            } else if (checkTotalAmount == 3&&rowFull(i)) {
+            } else if (checkTotalAmount == 3&&columnCheck(i)) {
                 return 2;
             }
             checkTotalAmount =0;
@@ -174,6 +188,53 @@ public class Gameboard implements Serializable {
         board = new int[3][3];
         gameState = false;
         turn = true;
+        reset = true;
+        ai =false;
+
     }
 
+    public void setChoice(String choice){
+        if(choice.equals("ai")){
+            ai = true;
+        }else{
+            ai=false;
+        }
+    }
+
+    public void aiMakeMove(){
+        int x =0;
+        int y = 0;
+        boolean place = false;
+        for(int i = 0; i< board.length;i++){
+            for(int j =0; j< board[i].length;j++){
+                if(board[i][j]==0){
+                    place = true;
+                    x =i;
+                    y =j;
+                    break;
+                }
+            }
+            if(place){
+                break;
+            }
+        }
+        updateBoard(2,x,y,true);
+    }
+
+    public void playSound(int option){
+        switch(option){
+            case 1:
+                Sound.playSound("piece.wav");
+                break;
+            case 2:
+                Sound.playSound("win.wav");
+                break;
+            case 3:
+                Sound.playSound("lose.wav");
+                break;
+            case 4:
+                Sound.playSound("tie.wav");
+                break;
+        }
+    }
 }

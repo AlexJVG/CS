@@ -14,11 +14,13 @@ public class ServerScreen extends JPanel implements MouseListener {
     private Gameboard localBoard;
     private JLabel serverScore;
     private JLabel clientScore;
+    private int requestreceived;
 
     public ServerScreen() {
         this.setLayout(null);
         addMouseListener(this);
         localBoard = new Gameboard();
+        requestreceived= 0;
         serverScore = new JLabel("Server Score: "+ 0);
         serverScore.setBounds(0,300,100,30);
         this.add(serverScore);
@@ -35,12 +37,26 @@ public class ServerScreen extends JPanel implements MouseListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
-        localBoard.drawBoard(g);
+        if(!localBoard.ai&&requestreceived>=2){
+            localBoard.drawBoard(g);
+        }else if(localBoard.ai&&requestreceived>=2){
+            g.drawString("Ai is playing",100,100);
+        }
     }
-
+    public void ai(){
+        localBoard.aiMakeMove();
+        try {
+            out.reset();
+            out.writeObject(localBoard);
+        } catch (IOException z) {
+            System.out.println(z);
+        }
+        revalidate();
+        repaint();
+    }
     public void mouseClicked(MouseEvent e) {
-        if(!localBoard.turn){
-            localBoard.updateBoard(2, e.getX(), e.getY());
+        if(!localBoard.turn&&!localBoard.ai&&e.getY()<=300&&requestreceived>=2){
+            localBoard.updateBoard(2, e.getX(), e.getY(),false);
             try {
                 out.reset();
                 out.writeObject(localBoard);
@@ -80,25 +96,46 @@ public class ServerScreen extends JPanel implements MouseListener {
         try {
             while (true) {
                 localBoard = (Gameboard) in.readObject();
-                if(!localBoard.gameState){
+                requestreceived++;
+                if(localBoard.reset){
+                    requestreceived=0;
+                    localBoard.reset = false;
+                    out.reset();
+                    out.writeObject(localBoard);
+                }
+                if(!localBoard.gameState&&!localBoard.reset){
                     localBoard.turn = false;
                 }
                 revalidate();
                 repaint();
                 int gameOver = localBoard.checkGameCompletion();
-                if(gameOver!=3&&localBoard.gameState){
+                switch(gameOver){
+                    case 0:
+                        localBoard.playSound(4);
+                        break;
+                    case 1:
+                        localBoard.playSound(2);
+                        break;
+                    case 2:
+                        localBoard.playSound(3);
+                        break;
+                }
+                if(gameOver!=3&&localBoard.gameState&&!localBoard.reset){
                     localBoard.gameOver(gameOver);
                     localBoard.turn = true;
-                }else if(gameOver!=3){
+                }else if(gameOver!=3&&!localBoard.reset){
                     localBoard.gameOver(gameOver);
                     localBoard.turn = true;
-                    localBoard.gameState = true;
                     out.reset();
                     out.writeObject(localBoard);
                 }
                 System.out.println(gameOver);
                 serverScore.setText("Server Score: "+ localBoard.serverWins);
                 clientScore.setText("Client Score: "+ localBoard.clientWins);
+                if(localBoard.ai&&requestreceived>=2&&gameOver==3&&!localBoard.reset){
+                    ai();
+                }
+
             }
         } catch (UnknownHostException e) {
             System.err.println("Host unknown: localhost");
