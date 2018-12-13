@@ -1,13 +1,26 @@
 import java.io.Serializable;
 
-public class Location<K,V> implements Serializable {
-    private K key;
-    private V value;
-    public Location(K key, V value){
-        this.key = key;
-        this.value = value;
+public class Location implements Serializable{
+    public static final long serialVersionUID = 31;
+    private int x;
+    private int y;
+    public Location(int x, int y){
+        this.x = x;
+        this.y =y;
     }
-    public K getKey(){ return key; }
 
-    public V getValue(){ return value; }
+    @Override
+    public int hashCode(){
+        return 31*x+y;
+    }
+
+    @Override    
+    public boolean equals(Object o){
+        Location temp= (Location) o;
+        if(temp.hashCode() == hashCode()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
