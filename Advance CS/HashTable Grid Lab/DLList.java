@@ -78,14 +78,9 @@ public class DLList<E>{
 	public boolean containsWater(int x, int y){
 		// System.out.println("Size:"+size());
 		Node<E> current = head.next();
-		System.out.println("Wtesting");
 		while(current.next()!=null){
 			Article temp = (Article)current.get();
-			// System.out.println(temp.getName());
-			// System.out.println("X:"+temp.getX()+"Y:"+temp.getY());
 			if(temp.getName().equals("Water")&&temp.getX()==x&&temp.getY()==y){
-				System.out.println("true");
-				System.out.println(temp.getX()+":"+temp.getY());
 				return true;
 			}
 			current = current.next();
@@ -95,12 +90,9 @@ public class DLList<E>{
 	}
 	public boolean containsObject(int x,int y){
 		Node<E> current = head.next();
-		System.out.println("Otesting");
 		while(current.next()!=null){
 			Article temp = (Article)current.get();
 			if((temp.getName().equals("Boulder")||temp.getName().equals("City")||temp.getName().equals("Tree"))&&temp.getX()==x&&temp.getY()==y){
-				System.out.println("true");
-				System.out.println(temp.getX()+":"+temp.getY());
 				return true;
 			}
 			current = current.next();
