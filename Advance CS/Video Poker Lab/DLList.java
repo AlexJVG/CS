@@ -46,6 +46,17 @@ public class DLList<E>{
 	public E get(int index){
 		return getNode(index).get();
 	}
+	public void get(E data){
+		Node<E> current = head.next();
+		int index = 0;
+		while(current.next()!=null){
+			if(current.get().equals(data)){
+				get(index);
+				break;
+			}
+			current = current.next();
+		}
+	}
 	public void remove(int index){
 		Node<E> two = getNode(index);
 		Node<E> one = two.previous();
@@ -83,5 +94,16 @@ public class DLList<E>{
 		current.setNext(temp);
 		temp.setPrevious(current);
 		temp.setNext(null);
+	} 
+	public boolean containsValue(int value){
+		Node<E> current = head.next();
+		while(current.next()!=null){
+			Pair<Integer,Integer> currentPair = (Pair<Integer,Integer>) current.get();
+			if(currentPair.getValue()==value){
+				return true;
+			}
+			current = current.next();
+		}
+		return false;
 	}
 }
