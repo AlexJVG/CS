@@ -1,4 +1,5 @@
-public class DLList<E>{
+import java.io.Serializable;
+public class DLList<E> implements Serializable{
 	private Node<E> head,tail;
 	private int size;
 	public DLList(){
@@ -71,33 +72,40 @@ public class DLList<E>{
 			current = current.next();
 		}
 		return false;
-	} 
+	}
 	public int size(){
 		return size;
 	}
-	public boolean containsWater(int x, int y){
-		// System.out.println("Size:"+size());
+	public boolean findItem(E item){
 		Node<E> current = head.next();
 		while(current.next()!=null){
-			Article temp = (Article)current.get();
-			if(temp.getName().equals("Water")&&temp.getX()==x&&temp.getY()==y){
+			if(current.get().hashCode()==item.hashCode()){
 				return true;
 			}
 			current = current.next();
 		}
-		System.out.println("false");
 		return false;
 	}
-	public boolean containsObject(int x,int y){
+	public void upImg(E item){
 		Node<E> current = head.next();
 		while(current.next()!=null){
-			Article temp = (Article)current.get();
-			if((temp.getName().equals("Boulder")||temp.getName().equals("City")||temp.getName().equals("Tree"))&&temp.getX()==x&&temp.getY()==y){
-				return true;
+			if(current.get().hashCode()==item.hashCode()){
+				Country test = (Country)current.get();
+				test.upImg();
+				current.setData((E)test);
 			}
 			current = current.next();
 		}
-		System.out.println("false");
-		return false;
+	}
+	public void downImg(E item){
+		Node<E> current = head.next();
+		while(current.next()!=null){
+			if(current.get().hashCode()==item.hashCode()){
+				Country test = (Country)current.get();
+				test.downImg();
+				current.setData((E)test);
+			}
+			current = current.next();
+		}
 	}
 }
