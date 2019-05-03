@@ -20,16 +20,16 @@ public class BinaryTree <E extends Comparable<E>>implements Serializable{
   }
   private void add(E data, Node<E> current) {
     if (current.get().compareTo(data) < 0) {
-      if (current.getRight() == null) {
-        current.setRight(new Node<E>(data));
-      } else {
-        add(data, current.getRight());
-      }
-    } else {
       if (current.getLeft() == null) {
         current.setLeft(new Node<E>(data));
       } else {
         add(data, current.getLeft());
+      }
+    } else {
+      if (current.getRight() == null) {
+        current.setRight(new Node<E>(data));
+      } else {
+        add(data, current.getRight());
       }
     }
   }
@@ -46,6 +46,21 @@ public class BinaryTree <E extends Comparable<E>>implements Serializable{
 	    toString(current.getLeft());
 	    str += current.get().toString();
 	    toString(current.getRight());
+    }
+  }
+
+  public String toStringReverse() {
+    str = "";
+    toStringReverse(root);
+
+    return str;
+  }
+
+  private void toStringReverse(Node<E> current) {
+    if (current != null) {
+      toStringReverse(current.getRight());
+      str += current.get().toString();
+      toStringReverse(current.getLeft());
     }
   }
 
@@ -72,20 +87,21 @@ public class BinaryTree <E extends Comparable<E>>implements Serializable{
   	if (data.compareTo(current.get())==0) {
       return current.get();
     }else{
-      if (current.get().compareTo(data) > 0) {
-        if (current.getRight() != null) {
-          recentPass++;
-          return get(data, current.getRight());
-        }
-      } else  {
+      if (current.get().compareTo(data) < 0) {
         if (current.getLeft() != null) {
           recentPass++;
           return get(data, current.getLeft());
+        }
+      } else  {
+        if (current.getRight() != null) {
+          recentPass++;
+          return get(data, current.getRight());
         }
       }
     }
     return null;
   }
+
   public boolean contains(E data) {
     return contains(data, root);
   }

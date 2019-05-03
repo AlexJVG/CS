@@ -7,6 +7,7 @@ import java.net.*;
 public class Screen extends JPanel implements ActionListener{
 	private BinaryTree<Account> tree = new BinaryTree<Account>();
 	private JTextArea textArea = new JTextArea();
+	private JScrollPane countryScrollPane;
 	private FileReader reader;
 	private FileWriter writer;
 	private File nameFile;
@@ -14,10 +15,21 @@ public class Screen extends JPanel implements ActionListener{
 	private JTextField first = new JTextField("First Name");
 	private JTextField last = new JTextField("Last Name");
 	private JTextArea label = new JTextArea();
+	private JButton addUser = new JButton("Add User");
+	private JTextField nameFirst = new JTextField("Enter First Name");
+	private JTextField nameLast = new JTextField("Enter Last Name");
+	private JTextField namePin = new JTextField("Enter Pin");
+	private JTextField nameBal = new JTextField("Enter Balance");
+	private JButton nameAdd = new JButton("Add User");
+	private JTextArea namePass = new JTextArea();
+	private JButton removeUser = new JButton("Remove User");
 	public Screen(){
 		this.setLayout(null);
-		textArea.setBounds(0,30,400,770);
+		textArea.setBounds(0,30,200,770);
 		this.add(textArea);
+        countryScrollPane = new JScrollPane(textArea);
+        countryScrollPane.setBounds(0,30,200,770);
+        this.add(countryScrollPane);
 		search.setBounds(200,0,200,30);
 		search.addActionListener(this);
 		this.add(search);
@@ -27,8 +39,36 @@ public class Screen extends JPanel implements ActionListener{
 		this.add(last);
 		label.setBounds(500,100,200,200);
 		this.add(label);
+		removeUser.setBounds(500,300,200,30);
+		removeUser.addActionListener(this);
+		this.add(removeUser);
+		nameFirst.setBounds(500,100,200,30);
+		this.add(nameFirst);
+		nameLast.setBounds(500,200,200,30);
+		this.add(nameLast);
+		namePin.setBounds(500,300,200,30);
+		this.add(namePin);
+		nameBal.setBounds(500,400,200,30);
+		this.add(nameBal);
+		nameAdd.setBounds(500,500,200,30);
+		nameAdd.addActionListener(this);
+		this.add(nameAdd);
+		namePass.setBounds(500,600,200,30);
+		this.add(namePass);
+		addUser.setBounds(200,30,200,30);
+		addUser.addActionListener(this);
+		this.add(addUser);
 		loadData();
+		label.setVisible(false);
+		removeUser.setVisible(false);
+		nameFirst.setVisible(false);
+		nameLast.setVisible(false);
+		namePin.setVisible(false);
+		nameBal.setVisible(false);
+		nameAdd.setVisible(false);
+		namePass.setVisible(false);
 		this.setVisible(true);
+		// tree.printNode();
 	}
 	public Dimension getPreferredSize(){
 		return new Dimension(800,800);
@@ -38,12 +78,45 @@ public class Screen extends JPanel implements ActionListener{
 	}
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource()==search){
+			label.setVisible(true);
+			removeUser.setVisible(true);
+			nameFirst.setVisible(false);
+			nameLast.setVisible(false);
+			namePin.setVisible(false);
+			nameBal.setVisible(false);
+			nameAdd.setVisible(false);
+			namePass.setVisible(false);
 			label.setText("");
 			label.append("Name: "+tree.get(new Account(first.getText(),last.getText(),0,0)).getFirst()+","+tree.get(new Account(first.getText(),last.getText(),0,0)).getLast()+"\n");
 			label.append("Pin: "+tree.get(new Account(first.getText(),last.getText(),0,0)).getPin()+"\n");
 			label.append("Bal: "+tree.get(new Account(first.getText(),last.getText(),0,0)).getBal()+"\n");
 			label.append("Passes: "+(tree.getPass()+1));
+		}else if(e.getSource()==addUser){
+			label.setVisible(false);
+			removeUser.setVisible(false);
+			nameFirst.setVisible(true);
+			nameLast.setVisible(true);
+			namePin.setVisible(true);
+			nameBal.setVisible(true);
+			nameAdd.setVisible(true);
+			namePass.setVisible(true);
+		}else if(e.getSource()==nameAdd){
+			textArea.append(nameFirst.getText()+","+nameLast.getText()+"\n");
+			tree.add(new Account(nameFirst.getText(),nameLast.getText(),Integer.parseInt(namePin.getText()),Double.parseDouble(nameBal.getText())));
+			namePass.setText("");
+			nameFirst.setText("");
+			nameLast.setText("");
+			namePin.setText("");
+			nameBal.setText("");
+			namePass.append("Passes: "+(tree.getPass()+1));
+			// tree.printNode();
+		}else if(e.getSource()==removeUser){
+			tree.remove(new Account(first.getText(),last.getText(),0,0));
+			label.setVisible(false);
+			removeUser.setVisible(false);
 		}
+		saveData();
+		textArea.setText(tree.toStringReverse());
 	}
 	private void saveData(){
 		FileOutputStream fos = null;
@@ -65,7 +138,6 @@ public class Screen extends JPanel implements ActionListener{
 		try{
 			File f = new File("./save.txt");
 			if(f.exists()&&!f.isDirectory()&&!f.createNewFile()){
-				System.out.println("testiong the fakjsd;lfkjs");
 				FileInputStream fis = null;
 		        ObjectInputStream in = null;
 		        try {
@@ -77,9 +149,8 @@ public class Screen extends JPanel implements ActionListener{
 		        } catch (Exception ex) {
 		            ex.printStackTrace();
 		        }
-		        textArea.append(tree.toString());
+		        textArea.append(tree.toStringReverse());
 			}else{
-				System.out.println("testing this");
 				nameFile = new File("./names.txt");
 				try{
 					reader = new FileReader(nameFile);
@@ -91,7 +162,7 @@ public class Screen extends JPanel implements ActionListener{
 				} catch(Exception e){
 					e.printStackTrace();
 				}	
-				textArea.append(tree.toString());
+				textArea.append(tree.toStringReverse());
 				saveData();
 			}
 		} catch(Exception z){

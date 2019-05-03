@@ -37,16 +37,11 @@ public class Account implements Comparable<Account>,Serializable{
 	public String toString(){
 		return this.first+","+this.last+"\n";
 	}
+	public String reverso(){
+		return this.last+","+this.first+"\n";
+	}
 	public int compareTo(Account o){
-		if(this.last.equals(o.getLast())&&this.first.equals(o.getFirst())){
-			return 0;
-		}else if(this.last.hashCode()>o.getLast().hashCode()){
-			return 1;
-		}else if(this.first.hashCode()>o.getFirst().hashCode()){
-			return 1;
-		}else{
-			return -1;
-		}
+		return reverso().compareTo(o.reverso());
 	}
 	public int hashCode(){
 		return this.pin;

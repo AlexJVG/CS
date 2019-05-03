@@ -2,6 +2,7 @@ import java.io.Serializable;
 public class Node<E> implements Serializable{
 	private Node<E> left,right;
 	private E data;
+	private final static long serialVersionUID = 6529685098267757690L;
 	public Node(E data){
 		this.left = null;
 		this.right = null;
