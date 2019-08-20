@@ -35,7 +35,7 @@ public class Projectile implements Runnable{
 	}
 	public synchronized boolean col(Enemy en){
 		if(en.getX()<this.x&&this.x<en.getX()+30&&en.getY()<this.y&&this.y<en.getY()+30){
-			System.out.println("yeet");
+			System.out.println("yqeet");
 			return true;
 		}else{
 			return false;

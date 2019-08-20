@@ -1,10 +1,11 @@
 import java.awt.*;
 import java.util.*;
 public class Fighter{
-	private int x,y;
+	private int x,y,lives;
 	public Fighter(){
 		this.x =0;
 		this.y=0;
+		this.lives = 3;
 	}
 	public Fighter(int x, int y){
 		this.x = x;
@@ -45,5 +46,19 @@ public class Fighter{
 	}
 	public void setY(int y){
 		this.y=y;
+	}
+	public void removeLife(){
+		this.lives--;
+	}
+	public int getLives(){
+		return this.lives;
+	}
+	public synchronized boolean col(BossProjectile bpro){
+		if(bpro.getX()<this.x&&this.x<bpro.getX()+30&&bpro.getY()<this.y&&this.y<bpro.getY()+30){
+			System.out.println("yqeet");
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

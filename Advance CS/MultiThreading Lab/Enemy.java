@@ -16,7 +16,7 @@ public class Enemy implements Runnable{
 			}else{
 				this.y=this.y+5;
 				try{
-					Thread.sleep(100);
+					Thread.sleep(500);
 				}catch(Exception e){}
 			}
 		}
@@ -35,6 +35,7 @@ public class Enemy implements Runnable{
 	public void removeItem(long id){
 		Runner.list_enemy_id.remove(id);
 		Runner.manager_enemy.remove(id);
+		EnemyManager.enemy_killed++;
 	}
 	public int getX(){
 		return this.x;

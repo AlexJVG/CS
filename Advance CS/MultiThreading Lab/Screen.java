@@ -5,15 +5,16 @@ import java.io.*;
 import javax.imageio.*;
 import java.util.*;
 public class Screen extends JPanel implements ActionListener,KeyListener{
-	private Fighter p1;
+	public static Fighter p1;
 	private Enemy en;
 	private ColManager col;
+	public static Thread g
 	private EnemyManager enM;
 	public Screen(){
 		this.setLayout(null);
 		p1 = new Fighter(350,750);
 		col = new ColManager();
-		Thread g = new Thread(col);
+		g = new Thread(col);
         g.start();
         enM = new EnemyManager();
         Thread z = new Thread(enM);
